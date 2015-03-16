@@ -47,7 +47,7 @@
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerObjectMapRecord.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerObjectMap.h"
-#include "L1Trigger/GlobalTrigger/interface/L1GlobalTrigger.h"
+//#include "L1Trigger/GlobalTrigger/interface/L1GlobalTrigger.h"
 
 
 #include<fstream>
@@ -244,14 +244,14 @@ EcalTimingAnalysis::beginJob( ) {
   //Now for the 3D timing plots.
   double ttEtaBins[36] = {-85, -80, -75, -70, -65, -60, -55, -50, -45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 1, 6, 11, 16, 21, 26, 31, 36, 41, 46, 51, 56, 61, 66, 71, 76, 81, 86 };
   double ttPhiBins[73];
-  double timingBins[126];
-  double timingtBins[501];
+  //double timingBins[126];
+  //double timingtBins[501];
   double ttEtaEEBins[21];
   for (int i = 0; i < 501; ++i)
     {
-      timingtBins[i]=2.5+double(i)*5./500.;
+      //timingtBins[i]=2.5+double(i)*5./500.;
 	  
-      if ( i < 126) {timingBins[i]=2.5+double(i)*5./125.;}
+      //if ( i < 126) {timingBins[i]=2.5+double(i)*5./125.;}
       if ( i < 21) {ttEtaEEBins[i]=0.0+double(i)*60./20.;}
       if (i<73) 
 	   {
@@ -336,7 +336,7 @@ void EcalTimingAnalysis::endJob() {
   TH1F* absTT[54];
   TH1F* absCh[54];
   TH1F* absTTRMS[54];
-  float meanr[68],x2r[68],nCryr[68], RMSr[68]; //Variable for Relative Timing
+  float meanr[68],x2r[68], RMSr[68]; //Variable for Relative Timing
   TH1F* relTT[54];
   TH1F* relCh[54];
   TH1F* relTTRMS[54]; 
@@ -382,7 +382,7 @@ void EcalTimingAnalysis::endJob() {
     for(int u=0;u<68;u++){
       mean[u] =0; x2[u]=0; nCry[u]=0;
       RMS[u] = -1;
-      meanr[u] =0; x2r[u]=0; nCryr[u]=0;
+      meanr[u] =0; x2r[u]=0;
       RMSr[u] = -1;
 	  ttStart[u] = -100;
 	  ttRStart[u]=-100;
@@ -798,7 +798,7 @@ EcalTimingAnalysis::analyze(  edm::Event const& iEvent,  edm::EventSetup const& 
    for(EcalUncalibratedRecHitCollection::const_iterator ithit = hits->begin(); ithit != hits->end(); ++ithit) {
      
      EBDetId anid(ithit->id()); 
-     EcalElectronicsId elecId = ecalElectronicsMap_->getElectronicsId(anid);
+     //EcalElectronicsId elecId = ecalElectronicsMap_->getElectronicsId(anid);
      //int DCCid = elecId.dccId();
      //int SMind = anid.ic();
      //std::cout << " chi 2 " << ithit->chi2() << " amp " << ithit->amplitude() << " time " << ithit->jitter() << std::endl;      
@@ -942,7 +942,7 @@ EcalTimingAnalysis::analyze(  edm::Event const& iEvent,  edm::EventSetup const& 
      for(EcalUncalibratedRecHitCollection::const_iterator ithit = hitsEE->begin(); ithit != hitsEE->end(); ++ithit) {
        
        EEDetId anid(ithit->id()); 
-       EcalElectronicsId elecId = ecalElectronicsMap_->getElectronicsId(anid);
+       //EcalElectronicsId elecId = ecalElectronicsMap_->getElectronicsId(anid);
        //int DCCid = elecId.dccId();
        //int SMind = anid.hashedIndex();
 
@@ -1190,28 +1190,30 @@ double EcalTimingAnalysis::timecorr(const CaloSubdetectorGeometry *geometry_p, D
    
    if (splash09cor_){
 		//New stuff Added to correct for splash09
-		int SplashNegative[36] = {-17, //EE- 
-		                     -14, -12, -11, -10, -9, -7, -6, -6, -5, -4, -3, -3, -2, -2, -1, -1, 0, //EB-
-							   0,   1,   1,   1,  1,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3, 3, //EB+
-	                          4 }; //EE+ 
-		double SplashNegativePerfect[36] = {-17.2043, //EE- 
-		                     -13.8665, -12.3648, -10.988, -9.72687, -8.50268, -7.44834, -6.48284, -5.59686, -4.73861, -3.99919, -3.32184,
-							  -2.69855, -2.09278, -1.56539, -1.08165, -0.637269, -0.215171, //EB-
-							   0.205693, 0.560748, 0.878232, 1.17239, 1.44515, 1.71026, 1.94109, 2.1543, 2.352, 2.54577, 2.71451,  
-							   2.8703, 3.01434, 3.15512, 3.27712, 3.38969, 3.49341, //EB+
-	                           4.24689 }; //EE+ 
+                int SplashNegative[36] = {-17, /*EE-*/ 
+                   -14, -12, -11, -10, -9, -7, -6, -6, -5, -4, -3, -3, -2, -2, -1, -1, 0, /*EB-*/
+                   0, 1,   1,   1,  1,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3, 3, /*EB+*/ 
+                   4 }; /*EE+*/ 
+                //double SplashNegativePerfect[36] = {-17.2043, /*EE-*/
+                //   -13.8665, -12.3648, -10.988, -9.72687, -8.50268, -7.44834,
+                //   -6.48284, -5.59686, -4.73861, -3.99919, -3.32184, -2.69855,
+                //   -2.09278, -1.56539, -1.08165, -0.637269, -0.215171, /*EB-*/
+                //   0.205693, 0.560748, 0.878232, 1.17239, 1.44515, 1.71026,
+                //   1.94109, 2.1543, 2.352, 2.54577, 2.71451,  2.8703, 3.01434,
+                //   3.15512, 3.27712, 3.38969, 3.49341, /*EB+*/
+                //   4.24689 }; /*EE+ */
 		int SplashPositive[36];
-		int SplashTTvals[36];
-		double SplashTTvalsD[36];
-		double SplashPositivePerfect[36]; 
+		//int SplashTTvals[36];
+		//double SplashTTvalsD[36];
+		//double SplashPositivePerfect[36]; 
 	    
 		for (int i = -18, j = 0; i < 19 ; ++i,++j)
 		{
 			if ( i == 0 ) i++;
-			SplashTTvals[j]=i;
-			SplashTTvalsD[j]= double (i);
+			//SplashTTvals[j]=i;
+			//SplashTTvalsD[j]= double (i);
 			SplashPositive[j]=SplashNegative[35-j];
-			SplashPositivePerfect[j]=SplashNegativePerfect[35-j];
+			//SplashPositivePerfect[j]=SplashNegativePerfect[35-j];
 		}	
 	
 		int ieta = 0;

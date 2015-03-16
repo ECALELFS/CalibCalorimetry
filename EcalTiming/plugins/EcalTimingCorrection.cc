@@ -276,7 +276,7 @@ EcalTimingCorrection::analyze(  edm::Event const& iEvent,  edm::EventSetup const
    for(int cry=1;cry<numXtals;cry++)
    {
      //std::cout << " ok 0.021 " << std::endl;
-     EEDetId detId = EEDetId::unhashIndex(cry);
+     //EEDetId detId = EEDetId::unhashIndex(cry);
      //std::cout << " ok 0.022 " << std::endl;
      //std::cout << " ix " << detId.ix() << " iy " << detId.iy() << " iz " << detId.zside() << std::endl;
      //EcalElectronicsId elecId = ecalElectronicsMap_->getElectronicsId(DetId(detId));
