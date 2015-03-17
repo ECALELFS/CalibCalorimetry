@@ -92,8 +92,8 @@ EcalTimeEleTreeMaker::EcalTimeEleTreeMaker (const edm::ParameterSet& iConfig) :
   naiveId_ (0)              
 {
   // TrackAssociator parameters // gfwork: can we remove this? 
-  edm::ParameterSet trkParameters = iConfig.getParameter<edm::ParameterSet> ("TrackAssociatorParameters") ;
-  trackParameters_.loadParameters ( trkParameters ) ;
+  //edm::ParameterSet trkParameters = iConfig.getParameter<edm::ParameterSet> ("TrackAssociatorParameters") ;
+  //trackParameters_.loadParameters ( trkParameters ) ;
   //trackAssociator_.useDefaultPropagator () ;
 
   // Create File
