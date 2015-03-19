@@ -62,8 +62,6 @@ using namespace std ;
 #define FILL_SHAPE_VARS 0
 
 EcalTimeTreeMaker::EcalTimeTreeMaker (const edm::ParameterSet& iConfig) :
-  barrelEcalRecHitCollection_              (iConfig.getParameter<edm::InputTag> ("barrelEcalRecHitCollection")),
-  endcapEcalRecHitCollection_              (iConfig.getParameter<edm::InputTag> ("endcapEcalRecHitCollection")),
   barrelBasicClusterCollection_            (iConfig.getParameter<edm::InputTag> ("barrelBasicClusterCollection")),
   endcapBasicClusterCollection_            (iConfig.getParameter<edm::InputTag> ("endcapBasicClusterCollection")),
   barrelSuperClusterCollection_            (iConfig.getParameter<edm::InputTag> ("barrelSuperClusterCollection")),
@@ -79,9 +77,13 @@ EcalTimeTreeMaker::EcalTimeTreeMaker (const edm::ParameterSet& iConfig) :
   naiveId_ (0)              
 
 {
+  barrelEcalRecHitCollection_  =  consumes<EcalRecHitCollection>(iConfig.getParameter<edm::InputTag> ("barrelEcalRecHitCollection"));
+  endcapEcalRecHitCollection_  =  consumes<EcalRecHitCollection>(iConfig.getParameter<edm::InputTag> ("endcapEcalRecHitCollection"));
+    
   // TrackAssociator parameters // gfwork: can we remove this? 
   edm::ParameterSet trkParameters = iConfig.getParameter<edm::ParameterSet> ("TrackAssociatorParameters") ;
-  trackParameters_.loadParameters ( trkParameters ) ;
+  edm::ConsumesCollector iC = consumesCollector();
+  trackParameters_.loadParameters ( trkParameters ,iC) ;
 
   // Create File
   fileName_ += "_"+intToString (runNum_)+".root" ;
@@ -123,14 +125,13 @@ void EcalTimeTreeMaker::analyze (const edm::Event& iEvent, const edm::EventSetup
   // Ecal barrel RecHits 
   edm::Handle<EcalRecHitCollection> pBarrelEcalRecHits ;
   const EcalRecHitCollection* theBarrelEcalRecHits = 0;
-  if( iEvent.getByLabel (barrelEcalRecHitCollection_, pBarrelEcalRecHits) && pBarrelEcalRecHits.isValid ())
+  if( iEvent.getByToken (barrelEcalRecHitCollection_, pBarrelEcalRecHits) && pBarrelEcalRecHits.isValid ())
     {
       theBarrelEcalRecHits = pBarrelEcalRecHits.product () ;   
     }
   if (! (pBarrelEcalRecHits.isValid ()) )
     {
-      LogWarning ("EcalTimeTreeMaker") << barrelEcalRecHitCollection_ 
-				     << " not available" ;
+      LogWarning ("EcalTimeTreeMaker") << "barrelEcalRecHitCollection not available" ;
       return ;
     }
   
@@ -138,15 +139,14 @@ void EcalTimeTreeMaker::analyze (const edm::Event& iEvent, const edm::EventSetup
   // Ecal endcap RecHits
   edm::Handle<EcalRecHitCollection> pEndcapEcalRecHits ;
   const EcalRecHitCollection* theEndcapEcalRecHits = 0;
-  if( iEvent.getByLabel (endcapEcalRecHitCollection_, pEndcapEcalRecHits) && pEndcapEcalRecHits.isValid ())
+  if( iEvent.getByToken (endcapEcalRecHitCollection_, pEndcapEcalRecHits) && pEndcapEcalRecHits.isValid ())
     {
       theEndcapEcalRecHits = pEndcapEcalRecHits.product () ;   
     }
   
   if (! (pEndcapEcalRecHits.isValid ()))
     {
-      LogWarning ("EcalTimeTreeMaker") << endcapEcalRecHitCollection_ 
-                                     << " not available" ;
+      LogWarning ("EcalTimeTreeMaker") << "endcapEcalRecHitCollection not available" ;
       return ;
     }
   
@@ -411,7 +411,8 @@ void EcalTimeTreeMaker::dumpBarrelClusterInfo (const edm::Event& iEvent,
 	   double thisamp  = myhit.energy () ;
 	   double thistime = myhit.time ();
 	   double thisChi2 = myhit.chi2 ();
-	   double thisOutOfTimeChi2 = myhit.outOfTimeChi2 ();
+           // this function removed in CMSSW_7_X_Y      
+	   //double thisOutOfTimeChi2 = myhit.outOfTimeChi2 ();
 
 	   
 	   EcalIntercalibConstantMap::const_iterator icalit = icalMap.find(detitr->first);
@@ -465,7 +466,7 @@ void EcalTimeTreeMaker::dumpBarrelClusterInfo (const edm::Event& iEvent,
            myTreeVariables_.xtalInBCFlag[numberOfClusters][numberOfXtalsInCluster]=         myhit.recoFlag(); 
            myTreeVariables_.xtalInBCAmplitudeADC[numberOfClusters][numberOfXtalsInCluster]= (float) thisamp/(icalconst*lasercalib*adcToGeV);
            myTreeVariables_.xtalInBCChi2[numberOfClusters][numberOfXtalsInCluster]=         thisChi2;
-           myTreeVariables_.xtalInBCOutOfTimeChi2[numberOfClusters][numberOfXtalsInCluster]=thisOutOfTimeChi2;
+           //myTreeVariables_.xtalInBCOutOfTimeChi2[numberOfClusters][numberOfXtalsInCluster]=thisOutOfTimeChi2; 
            // note: SwissCross = 1 - E4/E1   
            myTreeVariables_.xtalInBCSwissCross[numberOfClusters][numberOfXtalsInCluster] =
              EcalTools::swissCross(detitr->first,*theBarrelEcalRecHits,0.5);
@@ -647,7 +648,8 @@ void EcalTimeTreeMaker::dumpEndcapClusterInfo (const edm::Event& iEvent,
 	     double thisamp  = myhit.energy () ;
 	     double thistime = myhit.time ();
 	     double thisChi2 = myhit.chi2 ();
-	     double thisOutOfTimeChi2 = myhit.outOfTimeChi2 ();
+             // this function removed in CMSSW_7_X_Y
+	     //double thisOutOfTimeChi2 = myhit.outOfTimeChi2 ();
 
 	     // get laser coefficient
 	     float lasercalib = 1.;
@@ -697,7 +699,7 @@ void EcalTimeTreeMaker::dumpEndcapClusterInfo (const edm::Event& iEvent,
 	      myTreeVariables_.xtalInBCFlag[numberOfClusters][numberOfXtalsInCluster]=         myhit.recoFlag(); 
 	      myTreeVariables_.xtalInBCAmplitudeADC[numberOfClusters][numberOfXtalsInCluster]=      (float) thisamp/(icalconst*lasercalib*adcToGeV);
               myTreeVariables_.xtalInBCChi2[numberOfClusters][numberOfXtalsInCluster]=         thisChi2;
-              myTreeVariables_.xtalInBCOutOfTimeChi2[numberOfClusters][numberOfXtalsInCluster]=thisOutOfTimeChi2;
+              //myTreeVariables_.xtalInBCOutOfTimeChi2[numberOfClusters][numberOfXtalsInCluster]=thisOutOfTimeChi2;
               myTreeVariables_.xtalInBCSwissCross[numberOfClusters][numberOfXtalsInCluster] =
                 EcalTools::swissCross(detitr->first,*theEndcapEcalRecHits,0.5);
 

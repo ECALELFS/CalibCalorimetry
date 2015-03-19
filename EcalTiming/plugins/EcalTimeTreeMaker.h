@@ -158,8 +158,8 @@ class EcalTimeTreeMaker : public edm::EDAnalyzer
 
    protected:
 
-      edm::InputTag barrelEcalRecHitCollection_ ;
-      edm::InputTag endcapEcalRecHitCollection_ ;
+      edm::EDGetTokenT<EcalRecHitCollection>  barrelEcalRecHitCollection_ ;
+      edm::EDGetTokenT<EcalRecHitCollection>  endcapEcalRecHitCollection_ ;
       edm::InputTag barrelBasicClusterCollection_ ;
       edm::InputTag endcapBasicClusterCollection_ ;
       edm::InputTag barrelSuperClusterCollection_ ;

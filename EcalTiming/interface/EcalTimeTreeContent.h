@@ -125,7 +125,7 @@ struct EcalTimeTreeContent
   float xtalInBCTimeErr[MAXC][MAXXTALINC];
   float xtalInBCAmplitudeADC[MAXC][MAXXTALINC];
   float xtalInBCChi2[MAXC][MAXXTALINC];
-  float xtalInBCOutOfTimeChi2[MAXC][MAXXTALINC];
+  //float xtalInBCOutOfTimeChi2[MAXC][MAXXTALINC];
   float xtalInBCSwissCross[MAXC][MAXXTALINC];
     
   // vertex variables
